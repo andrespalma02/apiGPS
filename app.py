@@ -16,12 +16,21 @@ def hello():
 
 @app.route('/inventario_insumos/', methods=['POST'])
 def hello_world():
-    status=[]
+    status = []
     json_data = rq.json
     for items in json_data["tabla"]:
         r = requests.put(url, data=items, headers=headers)
         status.append(r)
     return status.__str__()
+
+
+@app.route('/inventario_insumos', methods=['GET'])
+def get_resource():
+    status = []
+    param = rq.args.get("paramName")
+    value = rq.args.get("paramValue")
+    r = requests.get(url + "?paramName=" + param + "&paramValue=" + value, headers=headers)
+    return r.json()
 
 
 if __name__ == '__main__':
