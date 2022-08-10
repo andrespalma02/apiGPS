@@ -1,2 +1,11 @@
 requests~=2.28.1
 flask~=2.2.2
+click
+gunicorn
+importlib-metadata
+itsdangerous
+Jinja2
+MarkupSafe
+typing-extensions
+Werkzeug
+zipp
