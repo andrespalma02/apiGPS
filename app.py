@@ -20,7 +20,7 @@ def hello_world():
     json_data = rq.json
     for items in json_data["tabla"]:
         r = requests.put(url + "Inventario_Desperdicios", data=items, headers=headers)
-        status.append(r.status_code)
+        status.append(r)
     return status.__str__()
 
 
