@@ -6,7 +6,7 @@ apiKey = "3809ccdc104d405f5387031f81abcf9cadba6f1767fcdff3"
 headers = {"Content-Type": "application/json",
            "X-Api-Key": apiKey,
            "X-Username": "bryan.palma02@epn.edu.ec"}
-url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/database/"
+url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/database/Inventario_Desperdicios"
 
 
 @app.route('/')
@@ -19,7 +19,7 @@ def hello_world():
     status=[]
     json_data = rq.json
     for items in json_data["tabla"]:
-        r = requests.put(url + "Inventario_Desperdicios", data=items, headers=headers)
+        r = requests.put(url, data=items, headers=headers)
         status.append(r)
     return status.__str__()
 
