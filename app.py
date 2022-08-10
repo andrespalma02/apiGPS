@@ -16,11 +16,12 @@ def hello():
 
 @app.route('/inventario_insumos/', methods=['POST'])
 def hello_world():
+    status=[]
     json_data = rq.json
     for items in json_data["tabla"]:
         r = requests.put(url + "Inventario_Desperdicios", data=items, headers=headers)
-        print(r.status_code)
-    return "listo"
+        status.append(r.status_code)
+    return status.__str__()
 
 
 if __name__ == '__main__':
