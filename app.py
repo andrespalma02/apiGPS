@@ -30,8 +30,18 @@ def recepcion():
     json_data = rq.json
     for items in json_data["tabla"]:
         pavos[items["Nombre"]] = int(items["Cantidad"])
-    pavos["Fecha de Recepción"] = json_data["Fecha de Recepción"]
-    print(pavos)
+    pavos["Pavitas"] = pavos.get("Pavitas", 0)
+    pavos["Pavos medianos"] = pavos.get("Pavos medianos", 0)
+    pavos["Pavos grandes"] = pavos.get("Pavos grandes", 0)
+    pavos["Pavos extra grandes"] = pavos.get("Pavos extra grandes", 0)
+    pavos["Pavos super extra grandes"] = pavos.get("Pavos super extra grandes", 0)
+    pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
+    pavos["Fecha de Recepción"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
+    pavos["Número de Lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
+    pavos["Peso de Lote"] = json_data["Peso del lote"] if "Peso del lote" in json_data else 0
+    pavos["Responsable"] = json_data["Responsable del Control de Calidad"] if "Responsable del Control de Calidad" in json_data else "N/D"
+    pavos["Procesado"] = 0
+
     r = requests.put(url + "inventario_de_recepcion", json=pavos, headers=headers)
     print(url + "inventario_de_recepcion")
     return r.text.__str__()
