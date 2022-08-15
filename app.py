@@ -88,8 +88,8 @@ def get_resource():
 
 @app.route('/sample', methods=['GET'])
 def get_sample():
-    json_data = rq.json
-    if json_data["ID"] == "1":
+    json_data = rq.args
+    if json_data.get("ID") == "1":
         tabla = {
             "tabla": [
                 {
