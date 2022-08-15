@@ -55,7 +55,7 @@ def recepcion_post():
 def recepcion_get():
     pavos = {"tabla": []}
     json_data = rq.json
-    r = requests.get(url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + "10-1660539600000").json()
+    r = requests.get(url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + json_data["Id"]).json()
     pavos["tabla"].append({"Cantidad": r["Pavitas"], "Producto": "Pavitas"}) if "Pavitas" in r else ""
     pavos["tabla"].append(
         {"Cantidad": r["Pavos medianos"], "Producto": "Pavos medianos"}) if "Pavos medianos" in r else ""
