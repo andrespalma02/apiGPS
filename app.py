@@ -51,15 +51,15 @@ def recepcion_post():
 def recepcion_get():
     pavos = {"tabla": []}
     json_data = rq.json
-    r = requests.get(url + "inventario_de_recepcion?paramName=Id" + "&paramValue=" + json_data["Id"]).json()
-    pavos["tabla"].append({"Cantidad": r["Pavitas"], "Nombre": "Pavitas"}) if "Pavitas" in r else ""
+    r = requests.get(url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + json_data["Id"]).json()
+    pavos["tabla"].append({"Cantidad": r["Pavitas"], "Producto": "Pavitas"}) if "Pavitas" in r else ""
     pavos["tabla"].append(
-        {"Cantidad": r["Pavos medianos"], "Nombre": "Pavos medianos"}) if "Pavos medianos" in r else ""
-    pavos["tabla"].append({"Cantidad": r["Pavos grandes"], "Nombre": "Pavos grandes"}) if "Pavos grandes" in r else ""
+        {"Cantidad": r["Pavos medianos"], "Producto": "Pavos medianos"}) if "Pavos medianos" in r else ""
+    pavos["tabla"].append({"Cantidad": r["Pavos grandes"], "Producto": "Pavos grandes"}) if "Pavos grandes" in r else ""
     pavos["tabla"].append(
-        {"Cantidad": r["Pavos extra grandes"], "Nombre": "Pavos extra grandes"}) if "Pavos extra grandes" in r else ""
+        {"Cantidad": r["Pavos extra grandes"], "Producto": "Pavos extra grandes"}) if "Pavos extra grandes" in r else ""
     pavos["tabla"].append({"Cantidad": r["Pavos super extra grandes"],
-                           "Nombre": "Pavos super extra grandes"}) if "Pavos super extra grandes" in r else ""
+                           "Producto": "Pavos super extra grandes"}) if "Pavos super extra grandes" in r else ""
     return pavos
 
 
