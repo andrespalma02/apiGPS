@@ -53,12 +53,20 @@ def get_resource():
     json_data = rq.json
     for item in json_data["tabla"]:
         r = requests.get(url + "Inventario_Insumos_Materiales?paramName=C%C3%B3digo" + "&paramValue=" + item["Código"])
-        cantidad = int(r.json()["Cantidad"])
-        cantidad += int(item["Cantidad"])
-        id_item = r.json()["Id"]
-        update = {"Id": id_item, "Cantidad": cantidad}
-        r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=false", json=update, headers=headers)
-    return "true"
+        if "Cantidad" not in r.json():
+            cantidad = item["Cantidad"]
+            codigo = item["Código"]
+            tipo = item["Tipo"] if "Tipo" in item else "Insumo"
+            nombre = item["Nombre"] if "Nombre" in item else "NaN"
+            id_item = item["Id"] if "Nombre" in item else 0
+            update = {"Id": id_item, "Código": codigo, "Tipo": tipo, "Nombre": nombre, "Cantidad": cantidad}
+        else:
+            cantidad = int(r.json()["Cantidad"])
+            cantidad += int(item["Cantidad"])
+            id_item = r.json()["Id"]
+            update = {"Id": id_item, "Cantidad": cantidad}
+        r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
+    return r.text
 
 
 if __name__ == '__main__':
