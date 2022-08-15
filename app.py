@@ -24,6 +24,7 @@ def hello_world():
     return status.__str__()
 
 
+
 @app.route('/inventario_recepcion/', methods=['POST'])
 def recepcion_post():
     pavos = {}
@@ -86,7 +87,8 @@ def produccion_post():
 def recepcion_get():
     pavos = {"tabla": []}
     json_data = rq.json
-    r = requests.get(url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + json_data["Id"]).json()
+    r = requests.get(
+        url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + str(json_data["Id"])).json()
     pavos["tabla"].append({"Cantidad": r["Pavitas"], "Producto": "Pavitas"}) if "Pavitas" in r else ""
     pavos["tabla"].append(
         {"Cantidad": r["Pavos medianos"], "Producto": "Pavos medianos"}) if "Pavos medianos" in r else ""
