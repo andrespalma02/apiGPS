@@ -86,5 +86,34 @@ def get_resource():
     return r.json()
 
 
+@app.route('/sample', methods=['GET'])
+def get_sample():
+    tabla = {
+        "tabla": [
+            {
+                "Cantidad": "20",
+                "Producto": "Pavitas"
+            },
+            {
+                "Cantidad": "5",
+                "Producto": "Pavos medianos"
+            },
+            {
+                "Cantidad": "0",
+                "Producto": "Pavos grandes"
+            },
+            {
+                "Cantidad": "0",
+                "Producto": "Pavos extra grandes"
+            },
+            {
+                "Cantidad": "0",
+                "Producto": "Pavos super extra grandes"
+            }
+        ]
+    }
+    return tabla
+
+
 if __name__ == '__main__':
     app.run()
