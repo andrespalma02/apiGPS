@@ -1,5 +1,3 @@
-import json
-
 import requests
 from flask import Flask, request as rq
 
@@ -64,8 +62,55 @@ def recepcion_get():
         {"Cantidad": r["Pavos extra grandes"], "Producto": "Pavos extra grandes"}) if "Pavos extra grandes" in r else ""
     pavos["tabla"].append({"Cantidad": r["Pavos super extra grandes"],
                            "Producto": "Pavos super extra grandes"}) if "Pavos super extra grandes" in r else ""
-    pavos.s
-    return json.load(pavos)
+    return pavos
+
+
+@app.route('/insumos/', methods=['POST'])
+def receta_post():
+    json_data = rq.json
+    r = requests.get(url + "list?dbase=Recetas&paramName=Id" + "&paramValue=" + str(json_data["id"])).json()
+    sal = 0
+    especias = 0
+    salsa = 0
+    acido = 0
+    pimienta = 0
+    conservante = 0
+    for item in json_data["tabla"]:
+        for receta in r:
+            if item["Producto"] == receta["Tamaño receta"]:
+                cantidad= float(item["Cantidad Eviscerada"])
+                sal += float(receta["Sal"]) * cantidad
+                especias += float(receta["Especias aromáticas"]) * cantidad
+                salsa += float(receta["Salsa de soya"]) * cantidad
+                acido += float(receta["Acido cítrico"]) * cantidad
+                pimienta += float(receta["Pimienta"]) * cantidad
+                conservante += float(receta["Conservante"]) * cantidad
+
+    total = 0
+    aux = sal * float(
+        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Sal").json()["precio"])
+    total += aux
+    aux = especias * float(
+        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Especias aromáticas").json()[
+            "precio"])
+    total += aux
+    aux = salsa * float(
+        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Salsa de soya").json()["precio"])
+    total += aux
+    aux = acido * float(
+        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Acido Cítrico").json()["precio"])
+    total += aux
+    aux = pimienta * float(
+        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Pimienta").json()["precio"])
+    total += aux
+    aux = conservante * float(
+        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Conservante+para+pavo").json()["precio"])
+    total += aux
+
+    datos = {"sal": sal, "especias": especias, "salsa": salsa, "acido": acido, "pimienta": pimienta,
+             "conservante": conservante, "total": total}
+
+    return datos
 
 
 @app.route('/inventario_insumos', methods=['PUT'])
