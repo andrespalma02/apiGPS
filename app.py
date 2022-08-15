@@ -88,30 +88,34 @@ def get_resource():
 
 @app.route('/sample', methods=['GET'])
 def get_sample():
-    tabla = {
-        "tabla": [
-            {
-                "Cantidad": "20",
-                "Producto": "Pavitas"
-            },
-            {
-                "Cantidad": "5",
-                "Producto": "Pavos medianos"
-            },
-            {
-                "Cantidad": "0",
-                "Producto": "Pavos grandes"
-            },
-            {
-                "Cantidad": "0",
-                "Producto": "Pavos extra grandes"
-            },
-            {
-                "Cantidad": "0",
-                "Producto": "Pavos super extra grandes"
-            }
-        ]
-    }
+    json_data = rq.json
+    if json_data["ID"] == "1":
+        tabla = {
+            "tabla": [
+                {
+                    "Cantidad": "20",
+                    "Producto": "Pavitas"
+                },
+                {
+                    "Cantidad": "5",
+                    "Producto": "Pavos medianos"
+                },
+                {
+                    "Cantidad": "0",
+                    "Producto": "Pavos grandes"
+                },
+                {
+                    "Cantidad": "0",
+                    "Producto": "Pavos extra grandes"
+                },
+                {
+                    "Cantidad": "0",
+                    "Producto": "Pavos super extra grandes"
+                }
+            ]
+        }
+    else:
+        tabla = {"tabla": [{"Cantidad": "0", "Producto": "Nada"}]}
     return tabla
 
 
