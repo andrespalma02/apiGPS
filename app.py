@@ -25,7 +25,7 @@ def hello_world():
 
 
 @app.route('/inventario_recepcion/', methods=['POST'])
-def recepcion():
+def recepcion_post():
     pavos = {}
     json_data = rq.json
     for items in json_data["tabla"]:
@@ -44,8 +44,23 @@ def recepcion():
     pavos["Procesado"] = 0
 
     r = requests.put(url + "inventario_de_recepcion", json=pavos, headers=headers)
-    print(url + "inventario_de_recepcion")
     return r.text.__str__()
+
+
+@app.route('/inventario_recepcion/', methods=['GET'])
+def recepcion_get():
+    pavos = {"tabla": []}
+    json_data = rq.json
+    r = requests.get(url + "inventario_de_recepcion?paramName=Id" + "&paramValue=" + json_data["Id"]).json()
+    pavos["tabla"].append({"Cantidad": r["Pavitas"], "Nombre": "Pavitas"}) if "Pavitas" in r else ""
+    pavos["tabla"].append(
+        {"Cantidad": r["Pavos medianos"], "Nombre": "Pavos medianos"}) if "Pavos medianos" in r else ""
+    pavos["tabla"].append({"Cantidad": r["Pavos grandes"], "Nombre": "Pavos grandes"}) if "Pavos grandes" in r else ""
+    pavos["tabla"].append(
+        {"Cantidad": r["Pavos extra grandes"], "Nombre": "Pavos extra grandes"}) if "Pavos extra grandes" in r else ""
+    pavos["tabla"].append({"Cantidad": r["Pavos super extra grandes"],
+                           "Nombre": "Pavos super extra grandes"}) if "Pavos super extra grandes" in r else ""
+    return pavos
 
 
 @app.route('/inventario_insumos', methods=['PUT'])
@@ -58,7 +73,7 @@ def get_resource():
             codigo = item["Código"]
             tipo = item["Tipo"] if "Tipo" in item else "Insumo"
             nombre = item["Nombre"] if "Nombre" in item else "NaN"
-            id_item = item["Id"] if "Nombre" in item else 0
+            id_item = item["Id"] if "Id" in item else 0
             update = {"Id": id_item, "Código": codigo, "Tipo": tipo, "Nombre": nombre, "Cantidad": cantidad}
         else:
             cantidad = int(r.json()["Cantidad"])
@@ -66,7 +81,7 @@ def get_resource():
             id_item = r.json()["Id"]
             update = {"Id": id_item, "Cantidad": cantidad}
         r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
-    return r.text
+    return r.json()
 
 
 if __name__ == '__main__':
