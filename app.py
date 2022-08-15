@@ -48,26 +48,39 @@ def recepcion_post():
     print(r.json())
     return r.json()
 
+
 @app.route('/registro_produccion/', methods=['POST'])
 def produccion_post():
     pavos = {}
     json_data = rq.json
     for items in json_data["tabla"]:
-        pavos[items["Producto"]] = int(items["Producción Total"])
+        pavos[items["Producto"]] = int(items["Producción Total"]) if "Producción Total" in items else ""
     pavos["Pavitas producidas"] = pavos.get("Pavitas", 0)
     pavos["Pavos medianos producidos"] = pavos.get("Pavos medianos", 0)
     pavos["Pavos grandes producidos"] = pavos.get("Pavos grandes", 0)
     pavos["Pavos extra grandes producidos"] = pavos.get("Pavos extra grandes", 0)
     pavos["Pavos super extra producidos"] = pavos.get("Pavos super extra grandes", 0)
-
     pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
     pavos["Fecha de registro"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
     pavos["Numero de lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
     pavos["Retirado"] = 0
-
     r = requests.put(url + "Inventario_Produccion", json=pavos, headers=headers)
-    print(r.json())
+    pavos = {}
+    for items in json_data["tabla"]:
+        pavos[items["Producto"]] = int(items["Desperdicio Total"]) if "Desperdicio Total" in items else ""
+    pavos["Pavitas"] = pavos.get("Pavitas", 0)
+    pavos["Pavos medianos"] = pavos.get("Pavos medianos", 0)
+    pavos["Pavos grandes"] = pavos.get("Pavos grandes", 0)
+    pavos["Pavos extra grandes"] = pavos.get("Pavos extra grandes", 0)
+    pavos["Pavos super extra grandes"] = pavos.get("Pavos super extra grandes", 0)
+    pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
+    pavos["Fecha de registro"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
+    pavos["Lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
+    pavos["Retirado"] = 0
+
+    r = requests.put(url + "Inventario_Desperdicios", json=pavos, headers=headers)
     return r.json()
+
 
 @app.route('/inventario_recepcion/', methods=['GET'])
 def recepcion_get():
@@ -98,7 +111,7 @@ def receta_post():
     for item in json_data["tabla"]:
         for receta in r:
             if item["Producto"] == receta["Tamaño receta"]:
-                cantidad= float(item["Cantidad Eviscerada"])
+                cantidad = float(item["Cantidad Eviscerada"])
                 sal += float(receta["Sal"]) * cantidad
                 especias += float(receta["Especias aromáticas"]) * cantidad
                 salsa += float(receta["Salsa de soya"]) * cantidad
@@ -124,7 +137,8 @@ def receta_post():
         requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Pimienta").json()["precio"])
     total += aux
     aux = conservante * float(
-        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Conservante+para+pavo").json()["precio"])
+        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Conservante+para+pavo").json()[
+            "precio"])
     total += aux
 
     datos = {"sal": sal, "especias": especias, "salsa": salsa, "acido": acido, "pimienta": pimienta,
