@@ -1,3 +1,5 @@
+import json
+
 import requests
 from flask import Flask, request as rq
 
@@ -53,7 +55,7 @@ def recepcion_post():
 def recepcion_get():
     pavos = {"tabla": []}
     json_data = rq.json
-    r = requests.get(url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + json_data["Id"]).json()
+    r = requests.get(url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + "10-1660539600000").json()
     pavos["tabla"].append({"Cantidad": r["Pavitas"], "Producto": "Pavitas"}) if "Pavitas" in r else ""
     pavos["tabla"].append(
         {"Cantidad": r["Pavos medianos"], "Producto": "Pavos medianos"}) if "Pavos medianos" in r else ""
@@ -62,7 +64,8 @@ def recepcion_get():
         {"Cantidad": r["Pavos extra grandes"], "Producto": "Pavos extra grandes"}) if "Pavos extra grandes" in r else ""
     pavos["tabla"].append({"Cantidad": r["Pavos super extra grandes"],
                            "Producto": "Pavos super extra grandes"}) if "Pavos super extra grandes" in r else ""
-    return pavos
+    pavos.s
+    return json.load(pavos)
 
 
 @app.route('/inventario_insumos', methods=['PUT'])
