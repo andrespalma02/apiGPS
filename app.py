@@ -29,12 +29,13 @@ def recepcion_post():
     pavos = {}
     json_data = rq.json
     for items in json_data["tabla"]:
-        pavos[items["Nombre"]] = int(items["Cantidad"])
+        pavos[items["Producto"]] = int(items["Cantidad"])
     pavos["Pavitas"] = pavos.get("Pavitas", 0)
     pavos["Pavos medianos"] = pavos.get("Pavos medianos", 0)
     pavos["Pavos grandes"] = pavos.get("Pavos grandes", 0)
     pavos["Pavos extra grandes"] = pavos.get("Pavos extra grandes", 0)
     pavos["Pavos super extra grandes"] = pavos.get("Pavos super extra grandes", 0)
+
     pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
     pavos["Fecha de Recepción"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
     pavos["Número de Lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
@@ -44,7 +45,8 @@ def recepcion_post():
     pavos["Procesado"] = 0
 
     r = requests.put(url + "inventario_de_recepcion", json=pavos, headers=headers)
-    return r.text.__str__()
+    print(r.json())
+    return r.json()
 
 
 @app.route('/inventario_recepcion/', methods=['GET'])
