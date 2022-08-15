@@ -82,7 +82,7 @@ def produccion_post():
     return r.json()
 
 
-@app.route('/inventario_recepcion/', methods=['GET'])
+@app.route('/inventario_recepcion_tabla/', methods=['POST'])
 def recepcion_get():
     pavos = {"tabla": []}
     json_data = rq.json
