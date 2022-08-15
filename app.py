@@ -39,7 +39,8 @@ def recepcion():
     pavos["Fecha de Recepción"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
     pavos["Número de Lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
     pavos["Peso de Lote"] = json_data["Peso del lote"] if "Peso del lote" in json_data else 0
-    pavos["Responsable"] = json_data["Responsable del Control de Calidad"] if "Responsable del Control de Calidad" in json_data else "N/D"
+    pavos["Responsable"] = json_data[
+        "Responsable del Control de Calidad"] if "Responsable del Control de Calidad" in json_data else "N/D"
     pavos["Procesado"] = 0
 
     r = requests.put(url + "inventario_de_recepcion", json=pavos, headers=headers)
@@ -47,12 +48,17 @@ def recepcion():
     return r.text.__str__()
 
 
-@app.route('/inventario_insumos', methods=['GET'])
+@app.route('/inventario_insumos', methods=['PUT'])
 def get_resource():
-    param = rq.args.get("paramName")
-    value = rq.args.get("paramValue")
-    r = requests.get(url + "?paramName=" + param + "&paramValue=" + value, headers=headers)
-    return r.json()
+    json_data = rq.json
+    for item in json_data["tabla"]:
+        r = requests.get(url + "Inventario_Insumos_Materiales?paramName=C%C3%B3digo" + "&paramValue=" + item["Código"])
+        cantidad = int(r.json()["Cantidad"])
+        cantidad += int(item["Cantidad"])
+        id_item = r.json()["Id"]
+        update = {"Id": id_item, "Cantidad": cantidad}
+        r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=false", json=update, headers=headers)
+    return "true"
 
 
 if __name__ == '__main__':
