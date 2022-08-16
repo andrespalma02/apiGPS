@@ -145,6 +145,7 @@ def calculo_final():
     salida["produccion"] = json_data["tabla_final"]
     salida["total_produccion"] = total_produccion
     salida["total_desperdicio"] = total_desperdicios
+    salida["total"]=total_produccion+total_desperdicios
 
     return salida
 
