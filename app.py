@@ -78,10 +78,7 @@ def eviscerado_get():
         pavo = datos_pavo["nombre"]
         if pavo in pavos_recepcion and str(pavos_recepcion[pavo]) != "0" or str(pavos_recepcion[pavo]) != "":
             pavos["tabla"].append({"Cantidad": pavos_recepcion[pavo], "Producto": pavo})
-    for pavo in pavos["tabla"]:
-        if str(pavo["Cantidad"])!="0":
-            pavos_2["tabla"].append({"Cantidad": pavos["Cantidad"], "Producto": pavo["Producto"]})
-    return pavos_2
+    return pavos
 
 
 @app.route('/condimentado_envasado/', methods=['POST'])
