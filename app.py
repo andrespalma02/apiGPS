@@ -53,7 +53,7 @@ def recepcion_post():
 def produccion_post():
     pavos = {}
     json_data = rq.json
-    for items in json_data["tabla"]:
+    for items in json_data["producciob"]:
         pavos[items["Producto"]] = int(items["Producción Total"]) if "Producción Total" in items else ""
     pavos["Pavitas producidas"] = pavos.get("Pavitas", 0)
     pavos["Pavos medianos producidos"] = pavos.get("Pavos medianos", 0)
@@ -66,7 +66,7 @@ def produccion_post():
     pavos["Retirado"] = 0
     r = requests.put(url + "Inventario_Produccion", json=pavos, headers=headers)
     pavos = {}
-    for items in json_data["tabla"]:
+    for items in json_data["desperdicio"]:
         pavos[items["Producto"]] = int(items["Desperdicio Total"]) if "Desperdicio Total" in items else ""
     pavos["Pavitas"] = pavos.get("Pavitas", 0)
     pavos["Pavos medianos"] = pavos.get("Pavos medianos", 0)
@@ -116,8 +116,6 @@ def calculo_final():
     salida = {}
     desperdicio = {"tabla_desperdicios": []}
     json_data = rq.json
-    pavos_recepcion = requests.get(
-        url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + str(json_data["Id"])).json()
     lista_pavos = requests.get(
         url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=materia+prima").json()
 
