@@ -68,6 +68,7 @@ def produccion_post():
 @app.route('/eviscerado/', methods=['POST'])
 def eviscerado_get():
     pavos = {"tabla": []}
+    pavos_2={"tabla": []}
     json_data = rq.json
     pavos_recepcion = requests.get(
         url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + str(json_data["Id"])).json()
@@ -77,7 +78,10 @@ def eviscerado_get():
         pavo = datos_pavo["nombre"]
         if pavo in pavos_recepcion and str(pavos_recepcion[pavo]) != "0" or str(pavos_recepcion[pavo]) != "":
             pavos["tabla"].append({"Cantidad": pavos_recepcion[pavo], "Producto": pavo})
-    return pavos
+    for pavo in pavos["tabla"]:
+        if pavo["Cantidac"]!=0:
+            pavos["tabla"].append({"Cantidad": pavos["Cantidad"], "Producto": pavo["Producto"]})
+    return pavos_2
 
 
 @app.route('/condimentado_envasado/', methods=['POST'])
