@@ -23,8 +23,8 @@ def recepcion_post():
     pavos["Pavita"] = pavos.get("Pavita", 0)
     pavos["Pavo Mediano"] = pavos.get("Pavo Mediano", 0)
     pavos["Pavo Grande"] = pavos.get("Pavos Grande", 0)
-    pavos["Pavo Extra Grande"] = pavos.get("Pavos extra grandes", 0)
-    pavos["Pavo Duper Extra Grande"] = pavos.get("Pavo Super Extra Grande", 0)
+    pavos["Pavo Extra Grande"] = pavos.get("Pavo Extra Grande", 0)
+    pavos["Pavo Súper Extra Grande"] = pavos.get("Pavo Súper Extra Grande", 0)
 
     pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
     pavos["Fecha de Recepción"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
