@@ -72,7 +72,6 @@ def produccion_post():
     pavos["Retirado"] = 0
 
     r = requests.put(url + "Inventario_Desperdicios", json=pavos, headers=headers)
-    print(r.text)
     return r.json()
 
 
