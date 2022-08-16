@@ -55,11 +55,13 @@ def produccion_post():
     json_data = rq.json
     for items in json_data["produccion"]:
         pavos[items["Producto"]] = int(items["Producción Total"]) if "Producción Total" in items else ""
-    pavos["Pavitas producidas"] = pavos.get("Pavita", 0)
-    pavos["Pavos medianos producidos"] = pavos.get("Pavo Mediano", 0)
-    pavos["Pavos grandes producidos"] = pavos.get("Pavos grandes", 0)
-    pavos["Pavos extra grandes producidos"] = pavos.get("Pavo Extra Grande", 0)
-    pavos["Pavos super extra producidos"] = pavos.get("Pavo Super Extra Grande", 0)
+
+    pavos["Pavitas producidas"] = int(pavos.get("Pavita", 0))
+    pavos["Pavos medianos producidos"] = int(pavos.get("Pavo Mediano", 0))
+    pavos["Pavos grandes producidos"] = int(pavos.get("Pavos grandes", 0))
+    pavos["Pavos extra grandes producidos"] = int(pavos.get("Pavo Extra Grande", 0))
+    pavos["Pavos super extra producidos"] = int(pavos.get("Pavo Super Extra Grande", 0))
+
     pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
     pavos["Fecha de registro"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
     pavos["Retirado"] = 0
@@ -67,11 +69,14 @@ def produccion_post():
     pavos = {}
     for items in json_data["desperdicio"]:
         pavos[items["Producto"]] = int(items["Desperdicio Total"]) if "Desperdicio Total" in items else ""
+    """
     pavos["Pavitas"] = pavos.get("Pavita", 0)
     pavos["Pavos medianos"] = pavos.get("Pavo Mediano", 0)
     pavos["Pavos grandes"] = pavos.get("Pavo Grande", 0)
     pavos["Pavos extra grandes"] = pavos.get("Pavo Extra Grande", 0)
     pavos["Pavos super extra grandes"] = pavos.get("Pavo Super Extra Grande", 0)
+    """
+
     pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
     pavos["Fecha de registro"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
     pavos["Retirado"] = 0
