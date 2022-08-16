@@ -243,6 +243,24 @@ def materiales_restar():
     return r.json()
 
 
+@app.route('/total_pavos_recibidos/', methods=['POST'])
+def total_pr():
+    json_data = rq.json
+    total=0
+    for item in json_data["tabla"]:
+        total+=float(item["Total"])
+    return {"total":total}
+
+
+@app.route('/total_insumos_recibidos/', methods=['POST'])
+def total_ir():
+    json_data = rq.json
+    total=0
+    for item in json_data["tabla"]:
+        total+=float(item["Total"])
+    return {"total":total}
+
+
 @app.route('/inventario_insumos', methods=['PUT'])
 def get_resource():
     json_data = rq.json
