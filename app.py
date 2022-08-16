@@ -188,8 +188,8 @@ def insumos_restar():
             id_item = item["Id"] if "Id" in item else 0
             update = {"Id": id_item, "Código": codigo, "Tipo": tipo, "Producto": producto, "Cantidad": cantidad}
         else:
-            cantidad = int(r.json()["Cantidad"])
-            cantidad -= int(item["Cantidad"])
+            cantidad = float(r.json()["Cantidad"])
+            cantidad -= float(item["Cantidad"])
             id_item = r.json()["Id"]
             update = {"Id": id_item, "Cantidad": cantidad}
         r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
