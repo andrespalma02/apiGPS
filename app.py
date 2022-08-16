@@ -178,7 +178,7 @@ def receta_post():
 def insumos_restar():
     json_data = rq.json
     for item in json_data["tabla"]:
-        r = requests.get(url + "Inventario_Insumos_Materiales?paramName=C%C3%B3digo" + "&paramValue=" + item["Código"])
+        r = requests.get(url + "Inventario_Insumos_Materiales?paramName=Producto" + "&paramValue=" + item["Condimento"])
         if "Cantidad" not in r.json():
             cantidad = item["Cantidad"]
             codigo = item["Código"]
@@ -195,36 +195,28 @@ def insumos_restar():
     return r.json()
 
 
-
 @app.route('/materiales/', methods=['POST'])
 def materiales_post():
     tabla_pavos = rq.json["tabla"]
-    id_tipo = rq.json["id"]
-    sal = especias = salsa = acido = pimienta = conservante = total = 0
-    recetas = requests.get(
-        url + "list?dbase=Recetas&paramName=Tipo+de+receta" + "&paramValue=" + str(id_tipo)).json()
-    for receta in recetas:
-        for pavo in tabla_pavos:
-            if pavo["Producto"] == receta["Tamaño receta"]:
-                cantidad = int(pavo["Cantidad"])
-                sal = sal + (float(receta["Sal"]) * cantidad)
-                acido = acido + (float(receta["Acido cítrico"]) * cantidad)
-                conservante = conservante + (float(receta["Conservante"]) * cantidad)
-                pimienta = pimienta + (float(receta["Pimienta"]) * cantidad)
-                salsa = salsa + (float(receta["Salsa de soya"]) * cantidad)
-                especias = especias + (float(receta["Especias aromáticas"]) * cantidad)
-    datos = {"Sal": sal, "Especias aromáticas": especias, "Salsa de soya": salsa, "Acido Cítrico": acido,
-             "Pimienta": pimienta,
-             "Conservante+para+pavo": conservante}
+    funda_t = funda_m = malla = medidor = rollo = alambre = total = 0
+    for pavo in tabla_pavos:
+        cantidad = int(pavo["Cantidad"])
+        funda_m = funda_m + cantidad
+        funda_t = funda_t + cantidad
+        malla = malla + cantidad
+        medidor = medidor + cantidad
+        rollo = rollo + cantidad
+        alambre = alambre + cantidad
+    datos = {"Funda termoencogible": funda_t, "Funda para menudencias": funda_m, "Malla para agarre": malla,
+             "Medidor de cocción": medidor, "Rollo de etiquetas": rollo, "Alambre para empaque": alambre}
     salida = {"tabla": []}
-    for especia, valor in datos.items():
-        aux = valor * float(
-            requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + especia).json()["precio"])
+    for material, valor in datos.items():
+        precio = \
+            requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + material.replace(" ", "+")).json()[
+                "precio"]
+        aux = valor * float(precio)
         total += aux
-        if especia == "Conservante+para+pavo":
-            salida["tabla"].append({"Condimento": "Conservante para pavo", "Cantidad": valor})
-        else:
-            salida["tabla"].append({"Condimento": especia, "Cantidad": valor})
+        salida["tabla"].append({"Material": material, "Cantidad": valor})
     salida["total"] = total
 
     return salida
@@ -234,7 +226,7 @@ def materiales_post():
 def materiales_restar():
     json_data = rq.json
     for item in json_data["tabla"]:
-        r = requests.get(url + "Inventario_Insumos_Materiales?paramName=C%C3%B3digo" + "&paramValue=" + item["Código"])
+        r = requests.get(url + "Inventario_Insumos_Materiales?paramName=Producto" + "&paramValue=" + item["Material"])
         if "Cantidad" not in r.json():
             cantidad = item["Cantidad"]
             codigo = item["Código"]
@@ -249,6 +241,7 @@ def materiales_restar():
             update = {"Id": id_item, "Cantidad": cantidad}
         r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
     return r.json()
+
 
 @app.route('/inventario_insumos', methods=['PUT'])
 def get_resource():
@@ -269,7 +262,6 @@ def get_resource():
             update = {"Id": id_item, "Cantidad": cantidad}
         r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
     return r.json()
-
 
 
 if __name__ == '__main__':
