@@ -14,16 +14,6 @@ def hello():
     return "Hola mundo"
 
 
-@app.route('/inventario_insumos/', methods=['POST'])
-def hello_world():
-    status = []
-    json_data = rq.json
-    for items in json_data["tabla"]:
-        r = requests.put(url + "Inventario_Desperdicios", json=items, headers=headers)
-        status.append(r.text)
-    return status.__str__()
-
-
 @app.route('/inventario_recepcion/', methods=['POST'])
 def recepcion_post():
     pavos = {}
@@ -184,6 +174,27 @@ def receta_post():
     return salida
 
 
+@app.route('/actualizar_insumos/', methods=['POST'])
+def insumos_restar():
+    json_data = rq.json
+    for item in json_data["tabla"]:
+        r = requests.get(url + "Inventario_Insumos_Materiales?paramName=C%C3%B3digo" + "&paramValue=" + item["Código"])
+        if "Cantidad" not in r.json():
+            cantidad = item["Cantidad"]
+            codigo = item["Código"]
+            tipo = item["Tipo"] if "Tipo" in item else "Insumo"
+            producto = item["Producto"] if "Producto" in item else "NaN"
+            id_item = item["Id"] if "Id" in item else 0
+            update = {"Id": id_item, "Código": codigo, "Tipo": tipo, "Producto": producto, "Cantidad": cantidad}
+        else:
+            cantidad = int(r.json()["Cantidad"])
+            cantidad -= int(item["Cantidad"])
+            id_item = r.json()["Id"]
+            update = {"Id": id_item, "Cantidad": cantidad}
+        r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
+    return r.json()
+
+
 
 @app.route('/materiales/', methods=['POST'])
 def materiales_post():
@@ -218,6 +229,27 @@ def materiales_post():
 
     return salida
 
+
+@app.route('/actualizar_materiales/', methods=['POST'])
+def materiales_restar():
+    json_data = rq.json
+    for item in json_data["tabla"]:
+        r = requests.get(url + "Inventario_Insumos_Materiales?paramName=C%C3%B3digo" + "&paramValue=" + item["Código"])
+        if "Cantidad" not in r.json():
+            cantidad = item["Cantidad"]
+            codigo = item["Código"]
+            tipo = item["Tipo"] if "Tipo" in item else "Insumo"
+            producto = item["Producto"] if "Producto" in item else "NaN"
+            id_item = item["Id"] if "Id" in item else 0
+            update = {"Id": id_item, "Código": codigo, "Tipo": tipo, "Producto": producto, "Cantidad": cantidad}
+        else:
+            cantidad = int(r.json()["Cantidad"])
+            cantidad -= int(item["Cantidad"])
+            id_item = r.json()["Id"]
+            update = {"Id": id_item, "Cantidad": cantidad}
+        r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
+    return r.json()
+
 @app.route('/inventario_insumos', methods=['PUT'])
 def get_resource():
     json_data = rq.json
@@ -238,38 +270,6 @@ def get_resource():
         r = requests.put(url + "Inventario_Insumos_Materiales/update?withInsert=true", json=update, headers=headers)
     return r.json()
 
-
-@app.route('/sample', methods=['GET'])
-def get_sample():
-    json_data = rq.args
-    if json_data.get("ID") == "1":
-        tabla = {
-            "tabla": [
-                {
-                    "Cantidad": "20",
-                    "Producto": "Pavita"
-                },
-                {
-                    "Cantidad": "5",
-                    "Producto": "Pavo Mediano"
-                },
-                {
-                    "Cantidad": "0",
-                    "Producto": "Pavo grandes"
-                },
-                {
-                    "Cantidad": "0",
-                    "Producto": "Pavos extra grandes"
-                },
-                {
-                    "Cantidad": "0",
-                    "Producto": "Pavos super extra grandes"
-                }
-            ]
-        }
-    else:
-        tabla = {"tabla": [{"Cantidad": "0", "Producto": "Nada"}]}
-    return tabla
 
 
 if __name__ == '__main__':
