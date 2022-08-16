@@ -24,7 +24,6 @@ def hello_world():
     return status.__str__()
 
 
-
 @app.route('/inventario_recepcion/', methods=['POST'])
 def recepcion_post():
     pavos = {}
@@ -83,21 +82,80 @@ def produccion_post():
     return r.json()
 
 
-@app.route('/inventario_recepcion_tabla/', methods=['POST'])
-def recepcion_get():
+@app.route('/eviscerado/', methods=['POST'])
+def eviscerado_get():
     pavos = {"tabla": []}
     json_data = rq.json
-    r = requests.get(
+    pavos_recepcion = requests.get(
         url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + str(json_data["Id"])).json()
-    pavos["tabla"].append({"Cantidad": r["Pavitas"], "Producto": "Pavitas"}) if "Pavitas" in r else ""
-    pavos["tabla"].append(
-        {"Cantidad": r["Pavos medianos"], "Producto": "Pavos medianos"}) if "Pavos medianos" in r else ""
-    pavos["tabla"].append({"Cantidad": r["Pavos grandes"], "Producto": "Pavos grandes"}) if "Pavos grandes" in r else ""
-    pavos["tabla"].append(
-        {"Cantidad": r["Pavos extra grandes"], "Producto": "Pavos extra grandes"}) if "Pavos extra grandes" in r else ""
-    pavos["tabla"].append({"Cantidad": r["Pavos super extra grandes"],
-                           "Producto": "Pavos super extra grandes"}) if "Pavos super extra grandes" in r else ""
+    lista_pavos = requests.get(
+        url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=materia+prima").json()
+    for datos_pavo in lista_pavos:
+        pavo = datos_pavo["nombre"]
+        if pavo in pavos_recepcion and pavos_recepcion[pavo] != "0":
+            pavos["tabla"].append({"Cantidad": pavos_recepcion[pavo], "Producto": pavo})
     return pavos
+
+
+@app.route('/condimentado_envasado/', methods=['POST'])
+def condimentado_envasado_get():
+    json_data = rq.json
+    for item in json_data["tabla"]:
+        if item["Desperdicio"] == "":
+            item["Desperdicio"] = "0"
+        else:
+            item["Cantidad"] = str(int(item["Cantidad"]) - int(item["Desperdicio"]))
+            item["Desperdicio"] = "0"
+    print(json_data)
+
+    return json_data
+
+
+@app.route('/calculo_final/', methods=['POST'])
+def calculo_final():
+    salida = {}
+    desperdicio = {"tabla_desperdicios": []}
+    json_data = rq.json
+    pavos_recepcion = requests.get(
+        url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + str(json_data["Id"])).json()
+    lista_pavos = requests.get(
+        url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=materia+prima").json()
+
+    for item in json_data["tabla_final"]:
+        if item["Desperdicio"] == "":
+            item["Desperdicio"] = "0"
+        else:
+            item["Cantidad"] = str(int(item["Cantidad"]) - int(item["Desperdicio"]))
+            item["Desperdicio"] = "0"
+    pavos_inicio = json_data["tabla_inicio"]
+
+    for i in range(len(pavos_inicio)):
+        datos_inicio = pavos_inicio[i]
+        datos_final = json_data["tabla_final"][i]
+        desperdicio["tabla_desperdicios"].append(
+            {"Cantidad": int(datos_inicio["Cantidad"]) - int(datos_final["Cantidad"]),
+             "Producto": datos_inicio["Producto"]})
+    total_produccion = 0.0
+    total_desperdicios = 0.0
+    for datos in desperdicio["tabla_desperdicios"]:
+        for item in lista_pavos:
+            precio = item["precio"]
+            nombre = item["nombre"]
+            if nombre in datos["Producto"]:
+                total_desperdicios = total_desperdicios + (int(datos["Cantidad"]) * float(precio))
+    for datos in json_data["tabla_final"]:
+        for item in lista_pavos:
+            precio = item["precio"]
+            nombre = item["nombre"]
+            if nombre in datos["Producto"]:
+                total_produccion = total_produccion + (int(datos["Cantidad"]) * float(precio))
+
+    salida["desperdicio"] = desperdicio["tabla_desperdicios"]
+    salida["produccion"] = json_data["tabla_final"]
+    salida["total_produccion"] = total_produccion
+    salida["total_desperdicio"] = total_desperdicios
+
+    return salida
 
 
 @app.route('/insumos/', methods=['POST'])
@@ -178,15 +236,15 @@ def get_sample():
             "tabla": [
                 {
                     "Cantidad": "20",
-                    "Producto": "Pavitas"
+                    "Producto": "Pavita"
                 },
                 {
                     "Cantidad": "5",
-                    "Producto": "Pavos medianos"
+                    "Producto": "Pavo Mediano"
                 },
                 {
                     "Cantidad": "0",
-                    "Producto": "Pavos grandes"
+                    "Producto": "Pavo grandes"
                 },
                 {
                     "Cantidad": "0",
