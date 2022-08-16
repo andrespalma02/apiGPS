@@ -75,7 +75,7 @@ def eviscerado_get():
         url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=materia+prima").json()
     for datos_pavo in lista_pavos:
         pavo = datos_pavo["nombre"]
-        if pavo in pavos_recepcion and pavos_recepcion[pavo] != "0":
+        if pavo in pavos_recepcion and pavos_recepcion[pavo] != "0" or pavos_recepcion[pavo] != "":
             pavos["tabla"].append({"Cantidad": pavos_recepcion[pavo], "Producto": pavo})
     return pavos
 
@@ -246,19 +246,19 @@ def materiales_restar():
 @app.route('/total_pavos_recibidos/', methods=['POST'])
 def total_pr():
     json_data = rq.json
-    total=0
+    total = 0
     for item in json_data["tabla"]:
-        total+=float(item["Total"])
-    return {"total":total}
+        total += float(item["Total"])
+    return {"total": total}
 
 
 @app.route('/total_insumos_recibidos/', methods=['POST'])
 def total_ir():
     json_data = rq.json
-    total=0
+    total = 0
     for item in json_data["tabla"]:
-        total+=float(item["Total"])
-    return {"total":total}
+        total += float(item["Total"])
+    return {"total": total}
 
 
 @app.route('/inventario_insumos', methods=['PUT'])
