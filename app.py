@@ -76,7 +76,7 @@ def eviscerado_get():
         url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=materia+prima").json()
     for datos_pavo in lista_pavos:
         pavo = datos_pavo["nombre"]
-        if pavo in pavos_recepcion and str(pavos_recepcion[pavo]) != "0" or str(pavos_recepcion[pavo]) != "":
+        if pavo in pavos_recepcion and str(pavos_recepcion[pavo]) != "0":
             pavos["tabla"].append({"Cantidad": pavos_recepcion[pavo], "Producto": pavo})
     return pavos
 
