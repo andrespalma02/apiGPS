@@ -79,7 +79,7 @@ def eviscerado_get():
         if pavo in pavos_recepcion and str(pavos_recepcion[pavo]) != "0" or str(pavos_recepcion[pavo]) != "":
             pavos["tabla"].append({"Cantidad": pavos_recepcion[pavo], "Producto": pavo})
     for pavo in pavos["tabla"]:
-        if pavo["Cantidac"]!=0:
+        if str(pavo["Cantidad"])!="0":
             pavos["tabla"].append({"Cantidad": pavos["Cantidad"], "Producto": pavo["Producto"]})
     return pavos_2
 
