@@ -145,58 +145,53 @@ def calculo_final():
     salida["produccion"] = json_data["tabla_final"]
     salida["total_produccion"] = total_produccion
     salida["total_desperdicio"] = total_desperdicios
-    salida["total"]=total_produccion+total_desperdicios
+    salida["total"] = total_produccion + total_desperdicios
 
     return salida
 
 
 @app.route('/insumos/', methods=['POST'])
 def receta_post():
-    json_data = rq.json
-    r = requests.get(url + "list?dbase=Recetas&paramName=Id" + "&paramValue=" + str(json_data["id"])).json()
+    tabla_pavos = rq.json["tabla"]
+    id_tipo = rq.json["id"]
     sal = 0
     especias = 0
     salsa = 0
     acido = 0
     pimienta = 0
     conservante = 0
-    for item in json_data["tabla"]:
-        for receta in r:
-            if item["Producto"] == receta["Tamaño receta"]:
-                cantidad = float(item["Cantidad Eviscerada"])
-                sal += float(receta["Sal"]) * cantidad
-                especias += float(receta["Especias aromáticas"]) * cantidad
-                salsa += float(receta["Salsa de soya"]) * cantidad
-                acido += float(receta["Acido cítrico"]) * cantidad
-                pimienta += float(receta["Pimienta"]) * cantidad
-                conservante += float(receta["Conservante"]) * cantidad
-
+    recetas = requests.get(
+        url + "list?dbase=Recetas&paramName=Tipo+de+receta" + "&paramValue=" + str(id_tipo)).json()
+    print(url + "list?dbase=Recetas&paramName=Tipo+de+receta" + "&paramValue=" + str(id_tipo))
+    precio = requests.get(url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=insumo").json()
+    print(url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=insumo")
+    for receta in recetas:
+        for pavo in tabla_pavos:
+            if pavo["Producto"] == receta["Tamaño receta"]:
+                cantidad = int(pavo["Cantidad"])
+                sal = sal + (float(receta["Sal"]) * cantidad)
+                acido = acido + (float(receta["Acido cítrico"]) * cantidad)
+                conservante = conservante + (float(receta["Conservante"]) * cantidad)
+                pimienta = pimienta + (float(receta["Pimienta"]) * cantidad)
+                salsa = salsa + (float(receta["Salsa de soya"]) * cantidad)
+                especias = especias + (float(receta["Especias aromáticas"]) * cantidad)
+    print(sal, acido, conservante, pimienta, salsa, especias)
+    datos = {"Sal": sal, "Especias aromáticas": especias, "Salsa de soya": salsa, "Acido Cítrico": acido,
+             "Pimienta": pimienta,
+             "Conservante+para+pavo": conservante}
     total = 0
-    aux = sal * float(
-        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Sal").json()["precio"])
-    total += aux
-    aux = especias * float(
-        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Especias aromáticas").json()[
-            "precio"])
-    total += aux
-    aux = salsa * float(
-        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Salsa de soya").json()["precio"])
-    total += aux
-    aux = acido * float(
-        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Acido Cítrico").json()["precio"])
-    total += aux
-    aux = pimienta * float(
-        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Pimienta").json()["precio"])
-    total += aux
-    aux = conservante * float(
-        requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + "Conservante+para+pavo").json()[
-            "precio"])
-    total += aux
+    salida = {"tabla": []}
+    for especia, valor in datos.items():
+        aux = valor * float(
+            requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + especia).json()["precio"])
+        total += aux
+        if especia == "Conservante+para+pavo":
+            salida["tabla"].append({"Condimento": "Conservante para pavo", "Cantidad": valor})
+        else:
+            salida["tabla"].append({"Condimento": especia, "Cantidad": valor})
+    salida["total"] = total
 
-    datos = {"sal": sal, "especias": especias, "salsa": salsa, "acido": acido, "pimienta": pimienta,
-             "conservante": conservante, "total": total}
-
-    return datos
+    return salida
 
 
 @app.route('/inventario_insumos', methods=['PUT'])
