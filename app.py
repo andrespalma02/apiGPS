@@ -16,6 +16,30 @@ def hello():
 
 @app.route('/inventario_recepcion/', methods=['POST'])
 def recepcion_post():
+    recepcion = {}
+    json_data = rq.json
+    recepcion["Fecha"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
+    recepcion["Lote"] = json_data["Identificador"] if "Identificador" in json_data else "N/D"
+    recepcion["Número de Lote"] = json_data["Identificador"] if "Número de lote" in json_data else "N/D"
+    recepcion["Peso de Lote"] = json_data["Peso del lote"] if "Peso del lote" in json_data else 0
+    recepcion["Responsable"] = json_data[
+        "Responsable del Control de Calidad"] if "Responsable del Control de Calidad" in json_data else "N/D"
+    recepcion["Procesado"] = 0
+    requests.put(url + "PRO_RECEPCION_GENERAL", json=recepcion, headers=headers)
+
+    pavos = {}
+
+    for items in json_data["tabla"]:
+        print(int(items["Cantidad"]), ", ", items["Producto"])
+        pavos["Cantidad"] = int(items["Cantidad"])
+        pavos["Producto"] = items["Producto"]
+        pavos["Lote"] = recepcion["Lote"]
+        requests.put(url + "PRO_DETALLE_RECEPCION", json=pavos, headers=headers)
+    return "True"
+
+
+@app.route('/inventario_recepcionn/', methods=['POST'])
+def recepcion_post_2():
     pavos = {}
     json_data = rq.json
     for items in json_data["tabla"]:
@@ -69,7 +93,7 @@ def produccion_post():
 @app.route('/eviscerado/', methods=['POST'])
 def eviscerado_get():
     pavos = {"tabla": []}
-    pavos_2={"tabla": []}
+    pavos_2 = {"tabla": []}
     json_data = rq.json
     pavos_recepcion = requests.get(
         url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + str(json_data["Id"])).json()
