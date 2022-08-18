@@ -38,33 +38,6 @@ def recepcion_post():
     return "True"
 
 
-""""
-@app.route('/inventario_recepcionn/', methods=['POST'])
-def recepcion_post_2():
-    pavos = {}
-    json_data = rq.json
-    for items in json_data["tabla"]:
-        pavos[items["Producto"]] = int(items["Cantidad"])
-    pavos["Pavita"] = pavos.get("Pavita", 0)
-    pavos["Pavo Mediano"] = pavos.get("Pavo Mediano", 0)
-    pavos["Pavo Grande"] = pavos.get("Pavos Grande", 0)
-    pavos["Pavo Extra Grande"] = pavos.get("Pavo Extra Grande", 0)
-    pavos["Pavo Súper Extra Grande"] = pavos.get("Pavo Súper Extra Grande", 0)
-    pavos["Pavo Premium"] = pavos.get("Pavo Premium", 0)
-
-    pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
-    pavos["Fecha de Recepción"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
-    pavos["Número de Lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
-    pavos["Peso de Lote"] = json_data["Peso del lote"] if "Peso del lote" in json_data else 0
-    pavos["Responsable"] = json_data[
-        "Responsable del Control de Calidad"] if "Responsable del Control de Calidad" in json_data else "N/D"
-    pavos["Procesado"] = 0
-
-    r = requests.put(url + "inventario_de_recepcion", json=pavos, headers=headers)
-    print(r.json())
-    return r.json()
-"""
-
 
 @app.route('/registro_produccion/', methods=['POST'])
 def produccion_post():
@@ -95,17 +68,11 @@ def produccion_post():
 @app.route('/eviscerado/', methods=['POST'])
 def eviscerado_get():
     pavos = {"tabla": []}
-    pavos_2 = {"tabla": []}
     json_data = rq.json
-    pavos_recepcion = requests.get(
-        url + "inventario_de_recepcion?paramName=Identificador" + "&paramValue=" + str(json_data["Id"])).json()
+    id_lote=json_data["Id"]
     lista_pavos = requests.get(
-        url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=materia+prima").json()
-    for datos_pavo in lista_pavos:
-        pavo = datos_pavo["nombre"]
-        if pavo in pavos_recepcion and str(pavos_recepcion[pavo]) != "0":
-            pavos["tabla"].append({"Cantidad": pavos_recepcion[pavo], "Producto": pavo})
-    return pavos
+        url + "list?dbase=PRO_DETALLE_RECEPCION&paramName=Lote" + f"&paramValue={id_lote}").json()
+    return lista_pavos
 
 
 @app.route('/condimentado_envasado/', methods=['POST'])
