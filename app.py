@@ -20,7 +20,7 @@ def recepcion_post():
     json_data = rq.json
     recepcion["Fecha"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
     recepcion["Lote"] = json_data["Identificador"] if "Identificador" in json_data else "N/D"
-    recepcion["Número de Lote"] = json_data["Identificador"] if "Número de lote" in json_data else "N/D"
+    recepcion["Número de Lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
     recepcion["Peso de Lote"] = json_data["Peso del lote"] if "Peso del lote" in json_data else 0
     recepcion["Responsable"] = json_data[
         "Responsable del Control de Calidad"] if "Responsable del Control de Calidad" in json_data else "N/D"
@@ -38,6 +38,7 @@ def recepcion_post():
     return "True"
 
 
+""""
 @app.route('/inventario_recepcionn/', methods=['POST'])
 def recepcion_post_2():
     pavos = {}
@@ -62,6 +63,7 @@ def recepcion_post_2():
     r = requests.put(url + "inventario_de_recepcion", json=pavos, headers=headers)
     print(r.json())
     return r.json()
+"""
 
 
 @app.route('/registro_produccion/', methods=['POST'])
