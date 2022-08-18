@@ -67,7 +67,6 @@ def produccion_post():
 
 @app.route('/eviscerado/', methods=['POST'])
 def eviscerado_get():
-    pavos = {"tabla": []}
     json_data = rq.json
     id_lote=json_data["Id"]
     lista_pavos = requests.get(
