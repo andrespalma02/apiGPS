@@ -38,7 +38,6 @@ def recepcion_post():
     return "True"
 
 
-
 @app.route('/registro_produccion/', methods=['POST'])
 def produccion_post():
     pavos = {}
@@ -68,10 +67,10 @@ def produccion_post():
 @app.route('/eviscerado/', methods=['POST'])
 def eviscerado_get():
     json_data = rq.json
-    id_lote=json_data["Id"]
+    id_lote = json_data["Id"]
     lista_pavos = requests.get(
         url + "list?dbase=PRO_DETALLE_RECEPCION&paramName=Lote" + f"&paramValue={id_lote}").json()
-    return lista_pavos
+    return {"tabla": lista_pavos}
 
 
 @app.route('/condimentado_envasado/', methods=['POST'])
