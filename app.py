@@ -133,6 +133,14 @@ def calculo_final():
     return salida
 
 
+@app.route('/guardar_receta/', methods=['POST'])
+def receta_post():
+    tabla = rq.json["tabla"]
+    for item in tabla:
+        requests.put(url + "RECETA", json=item, headers=headers)
+    return "True"
+
+
 @app.route('/insumos/', methods=['POST'])
 def receta_post():
     tabla_pavos = rq.json["tabla"]
