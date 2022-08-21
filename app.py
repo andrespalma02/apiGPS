@@ -141,73 +141,33 @@ def guardar_receta():
     return "True"
 
 
-@app.route('/insumos/', methods=['POST'])
-def receta_post():
-    tabla_pavos = rq.json["tabla"]
-    id_tipo = rq.json["id"]
-    sal = especias = salsa = acido = pimienta = conservante = total = 0
-    recetas = requests.get(
-        url + "list?dbase=Recetas&paramName=Tipo+de+receta" + "&paramValue=" + str(id_tipo)).json()
-    for receta in recetas:
-        for pavo in tabla_pavos:
-            if pavo["Producto"] == receta["Tamaño receta"]:
-                cantidad = int(pavo["Cantidad"])
-                sal = sal + (float(receta["Sal"]) * cantidad)
-                acido = acido + (float(receta["Acido cítrico"]) * cantidad)
-                conservante = conservante + (float(receta["Conservante"]) * cantidad)
-                pimienta = pimienta + (float(receta["Pimienta"]) * cantidad)
-                salsa = salsa + (float(receta["Salsa de soya"]) * cantidad)
-                especias = especias + (float(receta["Especias aromáticas"]) * cantidad)
-    datos = {"Sal": sal, "Especias aromáticas": especias, "Salsa de soya": salsa, "Acido Cítrico": acido,
-             "Pimienta": pimienta,
-             "Conservante+para+pavo": conservante}
-    salida = {"tabla": []}
-    for especia, valor in datos.items():
-        aux = valor * float(
-            requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + especia).json()["precio"])
-        total += aux
-        if especia == "Conservante+para+pavo":
-            salida["tabla"].append({"Condimento": "Conservante para pavo", "Cantidad": valor})
-        else:
-            salida["tabla"].append({"Condimento": especia, "Cantidad": valor})
-    salida["total"] = total
-
-    return salida
-
-
 @app.route('/condimentos/', methods=['POST'])
 def condimentos_post():
     tabla_pavos = rq.json["tabla"]
     id_tipo = rq.json["id"]
-    #cantidad tamaño
-    #for item in receta where id = id
-    #[
-    recetas = requests.get(
-        url + "list?dbase=Recetas&paramName=Tipo+de+receta" + "&paramValue=" + str(id_tipo)).json()
-    for receta in recetas:
-        for pavo in tabla_pavos:
-            if pavo["Producto"] == receta["Tamaño receta"]:
-                cantidad = int(pavo["Cantidad"])
-                sal = sal + (float(receta["Sal"]) * cantidad)
-                acido = acido + (float(receta["Acido cítrico"]) * cantidad)
-                conservante = conservante + (float(receta["Conservante"]) * cantidad)
-                pimienta = pimienta + (float(receta["Pimienta"]) * cantidad)
-                salsa = salsa + (float(receta["Salsa de soya"]) * cantidad)
-                especias = especias + (float(receta["Especias aromáticas"]) * cantidad)
-    datos = {"Sal": sal, "Especias aromáticas": especias, "Salsa de soya": salsa, "Acido Cítrico": acido,
-             "Pimienta": pimienta,
-             "Conservante+para+pavo": conservante}
+    ingredientes = {}
     salida = {"tabla": []}
-    for especia, valor in datos.items():
-        aux = valor * float(
-            requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + especia).json()["precio"])
-        total += aux
-        if especia == "Conservante+para+pavo":
-            salida["tabla"].append({"Condimento": "Conservante para pavo", "Cantidad": valor})
-        else:
-            salida["tabla"].append({"Condimento": especia, "Cantidad": valor})
-    salida["total"] = total
+    recetas = requests.get(
+        url + "list?dbase=RECETA&paramName=Tipo+de+Receta" + "&paramValue=" + str(id_tipo)).json()
+    for pavo in tabla_pavos:
+        for item in recetas:
+            if item["Tamaño"] == pavo["Producto"]:
+                cantidad = int(pavo["Cantidad"])
+                if item["Ingrediente"] in ingredientes:
+                    ingredientes[item["Ingrediente"]] = ingredientes[item["Ingrediente"]] + (
+                            float(item["Cantidad"]) * cantidad)
+                else:
+                    ingredientes[item["Ingrediente"]] = (float(item["Cantidad"]) * cantidad)
+    precios = requests.get(
+        url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=insumo").json()
+    total_insumos = 0
 
+    for precio in precios:
+        nombre_condimento = precio["nombre"]
+        if nombre_condimento in ingredientes:
+            total_insumos = total_insumos + (ingredientes[nombre_condimento] * float(precio["precio"]))
+            salida["tabla"].append({"Condimento": nombre_condimento, "Cantidad": ingredientes[nombre_condimento]})
+    salida["total"] = total_insumos
     return salida
 
 
@@ -235,26 +195,20 @@ def insumos_restar():
 @app.route('/materiales/', methods=['POST'])
 def materiales_post():
     tabla_pavos = rq.json["tabla"]
-    funda_t = funda_m = malla = medidor = rollo = alambre = total = 0
-    for pavo in tabla_pavos:
-        cantidad = int(pavo["Cantidad"])
-        funda_m = funda_m + cantidad
-        funda_t = funda_t + cantidad
-        malla = malla + cantidad
-        medidor = medidor + cantidad
-        rollo = rollo + cantidad
-        alambre = alambre + cantidad
-    datos = {"Funda termoencogible": funda_t, "Funda para menudencias": funda_m, "Malla para agarre": malla,
-             "Medidor de cocción": medidor, "Rollo de etiquetas": rollo, "Alambre para empaque": alambre}
     salida = {"tabla": []}
-    for material, valor in datos.items():
-        precio = \
-            requests.get(url + "item_produccion?paramName=nombre" + "&paramValue=" + material.replace(" ", "+")).json()[
-                "precio"]
-        aux = valor * float(precio)
-        total += aux
-        salida["tabla"].append({"Material": material, "Cantidad": valor})
-    salida["total"] = total
+    total_pavos = 0
+    for pavo in tabla_pavos:
+        total_pavos += int(pavo["Cantidad"])
+    print(total_pavos)
+    precios = requests.get(
+        url + "list?dbase=item_produccion&paramName=tipo_item" + "&paramValue=material").json()
+    total_materiales = 0
+
+    for precio in precios:
+        nombre_material = precio["nombre"]
+        salida["tabla"].append({"Material": nombre_material, "Cantidad": total_pavos})
+        total_materiales = total_materiales + (total_pavos * float(precio["precio"]))
+    salida["total"] = total_materiales
 
     return salida
 
