@@ -167,7 +167,7 @@ def condimentos_post():
         if nombre_condimento in ingredientes:
             total_insumos = total_insumos + (ingredientes[nombre_condimento] * float(precio["precio"]))
             salida["tabla"].append({"Condimento": nombre_condimento, "Cantidad": ingredientes[nombre_condimento]})
-    salida["total"] = total_insumos
+    salida["total"] = total_insumos*1.12
     return salida
 
 
@@ -208,7 +208,7 @@ def materiales_post():
         nombre_material = precio["nombre"]
         salida["tabla"].append({"Material": nombre_material, "Cantidad": total_pavos})
         total_materiales = total_materiales + (total_pavos * float(precio["precio"]))
-    salida["total"] = total_materiales
+    salida["total"] = total_materiales*1.12
 
     return salida
 
