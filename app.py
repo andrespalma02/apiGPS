@@ -221,7 +221,7 @@ def materiales_restar():
         if "Cantidad" not in r.json():
             cantidad = item["Cantidad"]
             codigo = item["Código"]
-            tipo = item["Tipo"] if "Tipo" in item else "Insumo"
+            tipo = item["Tipo"] if "Tipo" in item else "insumo"
             producto = item["Producto"] if "Producto" in item else "NaN"
             id_item = item["Id"] if "Id" in item else 0
             update = {"Id": id_item, "Código": codigo, "Tipo": tipo, "Producto": producto, "Cantidad": cantidad}
