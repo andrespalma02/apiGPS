@@ -126,9 +126,9 @@ def calculo_final():
 
     salida["desperdicio"] = desperdicio["tabla_desperdicios"]
     salida["produccion"] = json_data["tabla_final"]
-    salida["total_produccion"] = total_produccion
-    salida["total_desperdicio"] = total_desperdicios
-    salida["total"] = total_produccion + total_desperdicios
+    salida["total_produccion"] = total_produccion*1.12
+    salida["total_desperdicio"] = total_desperdicios*1.12
+    salida["total"] = (total_produccion + total_desperdicios)*1.12
 
     return salida
 
@@ -244,8 +244,10 @@ def total_pr():
     data = {
         "Valor Materia Prima": total * 1.12
     }
+    print(process_url)
     r = requests.post(process_url, json=data, headers=headers)
-    return r
+    print(r)
+    return "R"
 
 
 @app.route('/total_insumos_recibidos/', methods=['POST'])
