@@ -167,7 +167,7 @@ def condimentos_post():
         if nombre_condimento in ingredientes:
             total_insumos = total_insumos + (ingredientes[nombre_condimento] * float(precio["precio"]))
             salida["tabla"].append({"Condimento": nombre_condimento, "Cantidad": ingredientes[nombre_condimento]})
-    salida["total"] = total_insumos*1.12
+    salida["total"] = total_insumos * 1.12
     return salida
 
 
@@ -208,7 +208,7 @@ def materiales_post():
         nombre_material = precio["nombre"]
         salida["tabla"].append({"Material": nombre_material, "Cantidad": total_pavos})
         total_materiales = total_materiales + (total_pavos * float(precio["precio"]))
-    salida["total"] = total_materiales*1.12
+    salida["total"] = total_materiales * 1.12
 
     return salida
 
@@ -240,16 +240,31 @@ def total_pr():
     total = 0
     for item in json_data["tabla"]:
         total += float(item["Total"])
-    return {"total": total}
+    process_url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/instance?processCode=FINCOSPROD"
+    data = {
+        "Valor Materia Prima": total * 1.12
+    }
+    r = requests.post(process_url, json=data, headers=headers)
+    return r
 
 
 @app.route('/total_insumos_recibidos/', methods=['POST'])
 def total_ir():
     json_data = rq.json
-    total = 0
+    total_insumos = 0
+    total_mat = 0
     for item in json_data["tabla"]:
-        total += float(item["Total"])
-    return {"total": total}
+        if item["Tipo"] == "insumo":
+            total_insumos += float(item["Precio"])
+        else:
+            total_mat += float(item["Precio"])
+    process_url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/instance?processCode=FINCOSPROD"
+    data = {
+        "Valor Materiales": total_mat * 1.12,
+        "Valor Insumos": total_insumos * 1.12
+    }
+    r = requests.post(process_url, json=data, headers=headers)
+    return r
 
 
 @app.route('/inventario_insumos', methods=['PUT'])
