@@ -281,14 +281,14 @@ def total_ir():
             total_mat += float(item["Precio"])
     process_url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/instance?processCode=FINCOSPROD"
     data = {
-        "Valor Materiales ": total_mat * 1.12,
+        "Valor Materiales": total_mat * 1.12,
         "Valor Insumos": total_insumos * 1.12,
-        "Valor Materiales por Recibir": total_mat * 1.12,
+        "Valor Materiales Produccion por Recibir": total_mat * 1.12,
         "Valor Insumos por Recibir": total_insumos * 1.12
 
     }
-    r = requests.post(process_url, json=data, headers=headers)
-    return r
+    requests.post(process_url, json=data, headers=headers)
+    return "True"
 
 
 @app.route('/inventario_insumos', methods=['PUT'])
