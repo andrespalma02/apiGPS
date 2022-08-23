@@ -126,9 +126,9 @@ def calculo_final():
 
     salida["desperdicio"] = desperdicio["tabla_desperdicios"]
     salida["produccion"] = json_data["tabla_final"]
-    salida["total_produccion"] = total_produccion*1.12
-    salida["total_desperdicio"] = total_desperdicios*1.12
-    salida["total"] = (total_produccion + total_desperdicios)*1.12
+    salida["total_produccion"] = total_produccion * 1.12
+    salida["total_desperdicio"] = total_desperdicios * 1.12
+    salida["total"] = (total_produccion + total_desperdicios) * 1.12
 
     return salida
 
@@ -242,7 +242,8 @@ def total_pr():
         total += float(item["Total"])
     process_url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/instance?processCode=FINCOSPROD"
     data = {
-        "Valor Materia Prima": total * 1.12
+        "Valor Materia Prima": total * 1.12,
+        "Valor Mat. Prima Productos por Recibir": total * 1.12
     }
     print(process_url)
     r = requests.post(process_url, json=data, headers=headers)
@@ -280,8 +281,11 @@ def total_ir():
             total_mat += float(item["Precio"])
     process_url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/instance?processCode=FINCOSPROD"
     data = {
-        "Valor Materiales": total_mat * 1.12,
-        "Valor Insumos": total_insumos * 1.12
+        "Valor Materiales ": total_mat * 1.12,
+        "Valor Insumos": total_insumos * 1.12,
+        "Valor Materiales por Recibir": total_mat * 1.12,
+        "Valor Insumos por Recibir": total_insumos * 1.12
+
     }
     r = requests.post(process_url, json=data, headers=headers)
     return r
