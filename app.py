@@ -260,7 +260,7 @@ def total_prod():
         "Valor Total Materia Prima": json_data["materia_prima"],
         "Valor Total Producción Proceso": json_data["produccion_proceso"],
         "Valor Total Desperdicios": json_data["desperdicios"],
-        "Valor Total Producto Terminado": json_data["total_prod"],
+        "Valor Total Producto Terminado": json_data["prod_terminado"],
     }
     print(process_url)
     r = requests.post(process_url, json=data, headers=headers)
