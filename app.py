@@ -250,6 +250,24 @@ def total_pr():
     return "R"
 
 
+@app.route('/total_produccion/', methods=['POST'])
+def total_prod():
+    json_data = rq.json
+    total = 0
+    process_url = f"https://app.flokzu.com/flokzuopenapi/api/{apiKey}/instance?processCode=FINCOSPROD"
+    data = {
+        "Valor Total Producción en Proceso": json_data["total_prod"],
+        "Valor Total Materia Prima": json_data["materia_prima"],
+        "Valor Total Producción Proceso": json_data["produccion_proceso"],
+        "Valor Total Desperdicios": json_data["desperdicios"],
+        "Valor Total Producto Terminado": json_data["total_prod"],
+    }
+    print(process_url)
+    r = requests.post(process_url, json=data, headers=headers)
+    print(r)
+    return "R"
+
+
 @app.route('/total_insumos_recibidos/', methods=['POST'])
 def total_ir():
     json_data = rq.json
