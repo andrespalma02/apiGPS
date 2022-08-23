@@ -40,28 +40,23 @@ def recepcion_post():
 
 @app.route('/registro_produccion/', methods=['POST'])
 def produccion_post():
-    pavos = {}
+    recepcion = {}
     json_data = rq.json
-    for items in json_data["produccion"]:
-        pavos[items["Producto"]] = int(items["Cantidad"]) if "Cantidad" in items else ""
-    print(pavos)
+    recepcion["Fecha"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
+    recepcion["Lote"] = json_data["Identificador"] if "Identificador" in json_data else "N/D"
+    recepcion["Número de Lote"] = json_data["Número de lote"] if "Número de lote" in json_data else "N/D"
+    recepcion["Retirado"] = 0
+    requests.put(url + "GENERAL_PRODUCCION", json=recepcion, headers=headers)
 
-    pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
-    pavos["Fecha de registro"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
-    pavos["Retirado"] = 0
-    r = requests.put(url + "Inventario_Produccion", json=pavos, headers=headers)
     pavos = {}
-    for items in json_data["desperdicio"]:
-        if "Cantidad" in items:
-            if int(items["Cantidad"]) != 0:
-                pavos[items["Producto"]] = int(items["Cantidad"])
 
-    pavos["Identificador"] = json_data["Identificador"] if "Identificador" in json_data else "XXXX1900/01/01"
-    pavos["Fecha de registro"] = json_data["Fecha"] if "Fecha" in json_data else "1900/01/01"
-    pavos["Retirado"] = 0
+    for items in json_data["tabla"]:
+        pavos["Cantidad"] = int(items["Cantidad"])
+        pavos["Producto"] = items["Producto"]
+        pavos["Lote"] = recepcion["Lote"]
+        requests.put(url + "DETALLE_PRODUCCION", json=pavos, headers=headers)
+    return "True"
 
-    r = requests.put(url + "Inventario_Desperdicios", json=pavos, headers=headers)
-    return r.json()
 
 
 @app.route('/eviscerado/', methods=['POST'])
